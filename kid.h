@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "gift.h"
+#include "global.h"
 
 using namespace std;
 
@@ -10,7 +11,7 @@ class Kid
 {
 public:
     Kid();
-    Kid(string n, int spb, vector<Gift*> r, int lo, int la, int e);
+    Kid(string n, int spb, int lo, int la, int e);
 
     unsigned int index;
     string nombre;
@@ -19,6 +20,9 @@ public:
     int longitud;
     int latitud;
     int edad;
+
+    void setRegalos(vector<Gift*> r);
+    void changeCarbon();
 };
 
 #endif // KID_H

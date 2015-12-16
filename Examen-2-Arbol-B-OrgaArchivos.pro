@@ -21,6 +21,7 @@ HEADERS  += mainwindow.h \
     kid.h \
     gift.h \
     Btree.h \
-    B_node.h
+    B_node.h \
+    global.h
 
 FORMS    += mainwindow.ui

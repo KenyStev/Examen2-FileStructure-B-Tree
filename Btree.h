@@ -14,29 +14,29 @@ protected: // dato members
 	B_node<Type, order> *root;
 private:
 	void recInorder(B_node<Type, order> * current );
-	bool  Encontrar( B_node<Type, order> *current, Type &target);
-    Kid*  EncontrarKid( B_node<Type, order> *current, Type &target);
+    bool  Encontrar( B_node<Type, order> *current, Kid *&target);
+    Kid*  EncontrarKid( B_node<Type, order> *current, int target);
 
 public: // publics.
 	Btree();
 	// travesling
 	void inOrder();
-	bool buscar( Type &searchitem );
-    Kid* buscarKid( Type &searchitem );
+    bool buscar( Kid *&searchitem );
+    Kid* buscarKid( int searchitem );
 	void mostrarArbol();
 	// insertion
-    bool buscarEnNodo( B_node<Type, order> *current, const Kid &target, int &position );
-    Kid* buscarKidEnNodo( B_node<Type, order> *current, const Type &target, int &position );
-    void insertar(const Kid &new_entry);
-    void insertar(const Kid &new_entry,Kid*kid);
-    void insertarEnRecursion( B_node<Type, order> *current, const Kid &new_entry,Kid &median,B_node<Type, order> * &rightchilds , bool &result );
-    void insertarEnNodo(B_node<Type, order> *current, const Kid &entry, B_node<Type, order> *rightchilds, int position);
-    void dividirNodo( B_node<Type, order> *current,  const Kid &extra_entry,   B_node<Type, order> *extra_childs,  int position,
-        B_node<Type, order> * &right_half,   Kid &median);
+    bool buscarEnNodo( B_node<Type, order> *current, Kid *&target, int &position );
+    Kid* buscarKidEnNodo( B_node<Type, order> *current, const int target, int &position );
+    void insertar(Kid *&new_entry);
+    void insertar(Kid &new_entry,Kid*kid);
+    void insertarEnRecursion( B_node<Type, order> *current, Kid *&new_entry,Kid *&median,B_node<Type, order> * &rightchilds , bool &result );
+    void insertarEnNodo(B_node<Type, order> *current, Kid *&entry, B_node<Type, order> *rightchilds, int position);
+    void dividirNodo( B_node<Type, order> *current,  Kid *&extra_entry,   B_node<Type, order> *extra_childs,  int position,
+        B_node<Type, order> * &right_half,   Kid *&median);
 	// eliminacion
 
-	void remover( const Type &target );
-	void removerEnRecursion( B_node<Type, order> *current, const Type &target );
+    void remover( Kid *&target );
+    void removerEnRecursion( B_node<Type, order> *current, Kid *&target );
 	void removerDato(  B_node<Type, order> *current, int position  );
 	void copiarDePredecesor(  B_node<Type, order> *current, int position );
 	// funciones para restaurar despues de la eliminacion
@@ -63,22 +63,22 @@ template <class Type, int order> void Btree<Type,order>::recInorder(B_node<Type,
 		for (int i = 0; i < current->count; i++)
 		{
 			cout << current->data[i] << " ";
-			recInorder(current->childs[i + 1]);
+            recInorder(current->childs[i + 1]);
 		}
 	}
 }
-template <class Type, int order> bool Btree<Type,order>::buscar( Type &searchitem ){
+template <class Type, int order> bool Btree<Type,order>::buscar( Kid *&searchitem ){
 	
 	return Encontrar( root , searchitem );
 }
-template <class Type, int order> bool Btree<Type,order>::Encontrar( B_node<Type, order> *current, Type &target ){
+template <class Type, int order> bool Btree<Type,order>::Encontrar( B_node<Type, order> *current, Kid *&target ){
 	
 	bool result = false;
 	int position;
 	if (current != NULL) {
 		result = buscarEnNodo(current, target, position);
 		if (result == false)
-			result = Encontrar(current->childs[position], target);
+            result = Encontrar(current->childs[position], target);
 		else
             target = current->data[position];
 	}
@@ -86,21 +86,21 @@ template <class Type, int order> bool Btree<Type,order>::Encontrar( B_node<Type,
 }
 
 
-template <class Type, int order> bool Btree<Type,order>::buscarEnNodo( B_node<Type, order> *current, const Kid &target, int &position ){
+template <class Type, int order> bool Btree<Type,order>::buscarEnNodo( B_node<Type, order> *current, Kid *&target, int &position ){
 	position=0;
-    while (position < current->count && target.index > current->data[position].index)
+    while (position < current->count && target->index > current->data[position]->index)
 		position++; 
-    if (position < current->count && target.index == current->data[position].index)
+    if (position < current->count && target->index == current->data[position]->index)
 		return true;
 	else
 		return false;
 }
 
-template <class Type, int order> Kid* Btree<Type,order>::buscarKid( Type &searchitem ){
+template <class Type, int order> Kid* Btree<Type,order>::buscarKid( int searchitem ){
 
     return EncontrarKid( root , searchitem );
 }
-template <class Type, int order> Kid* Btree<Type,order>::EncontrarKid( B_node<Type, order> *current, Type &target ){
+template <class Type, int order> Kid* Btree<Type,order>::EncontrarKid( B_node<Type, order> *current, int target ){
 
     Kid *result = NULL;
     int position;
@@ -109,24 +109,24 @@ template <class Type, int order> Kid* Btree<Type,order>::EncontrarKid( B_node<Ty
         if (result == NULL)
             result = EncontrarKid(current->childs[position], target);
         else
-            target = current->data[position];
+            target = current->data[position].index;
     }
     return result;
 }
 
 
-template <class Type, int order> Kid* Btree<Type,order>::buscarKidEnNodo( B_node<Type, order> *current, const Type &target, int &position ){
+template <class Type, int order> Kid* Btree<Type,order>::buscarKidEnNodo( B_node<Type, order> *current, const int target, int &position ){
     position=0;
-    while (position < current->count && target > current->data[position])
+    while (position < current->count && target > current->data[position].index)
         position++;
-    if (position < current->count && target == current->data[position])
-        return current->kid;
+    if (position < current->count && target == current->data[position].index)
+        return &current->data[target];
     else
         return NULL;
 }
 
-template <class Type, int order> void Btree<Type,order>::insertar(const Kid &new_entry){
-    Kid median;
+template <class Type, int order> void Btree<Type,order>::insertar(Kid *&new_entry){
+    Kid *median;
     B_node<Type, order> *rightchilds, *new_root;
 	bool  result ; 
 	insertarEnRecursion(root, new_entry, median, rightchilds , result);
@@ -137,10 +137,10 @@ template <class Type, int order> void Btree<Type,order>::insertar(const Kid &new
 		new_root->childs[0] = root;
 		new_root->childs[1] = rightchilds;
 		root = new_root;
-	}
+    }
 }
 
-template <class Type, int order> void Btree<Type,order>::insertar(const Kid &new_entry,Kid*kid){
+template <class Type, int order> void Btree<Type,order>::insertar(Kid &new_entry,Kid*kid){
     Type median;
     B_node<Type, order> *rightchilds, *new_root;
     bool  result ;
@@ -156,7 +156,7 @@ template <class Type, int order> void Btree<Type,order>::insertar(const Kid &new
 }
 
 template <class Type, int order> void Btree<Type,order>::insertarEnRecursion( B_node<Type, order> *current,
-    const Kid &new_entry,Kid &median,B_node<Type, order> * &rightchilds , bool &result ){
+    Kid *&new_entry,Kid *&median,B_node<Type, order> * &rightchilds , bool &result ){
 
 		int position;
 		if (current == NULL) {
@@ -173,7 +173,7 @@ template <class Type, int order> void Btree<Type,order>::insertarEnRecursion( B_
 				return; 
 			}
 			else {
-                Kid extra_entry;
+                Kid *extra_entry;
 				B_node<Type, order> *extra_childs;
 
 				insertarEnRecursion(current->childs[position], new_entry,extra_entry, extra_childs , result);
@@ -190,7 +190,7 @@ template <class Type, int order> void Btree<Type,order>::insertarEnRecursion( B_
 		}
 }
 template <class Type, int order> void Btree<Type,order>::insertarEnNodo(B_node<Type, order> *current,
-    const Kid &entry, B_node<Type, order> *rightchilds, int position){
+    Kid *&entry, B_node<Type, order> *rightchilds, int position){
 		int i; 
 		for(i=current->count-1;i>= position;i--){ 
 			current->data[i+1]=current->data[i];
@@ -200,8 +200,8 @@ template <class Type, int order> void Btree<Type,order>::insertarEnNodo(B_node<T
 		current->childs[i+2]=rightchilds ;
 		current->count++;
 }
-template <class Type, int order> void Btree<Type,order>::dividirNodo( B_node<Type, order> *current,  const Kid &extra_entry,   B_node<Type, order> *extra_childs,  int position,
-    B_node<Type, order> * &right_half,   Kid &median){
+template <class Type, int order> void Btree<Type,order>::dividirNodo( B_node<Type, order> *current,  Kid *&extra_entry,   B_node<Type, order> *extra_childs,  int position,
+    B_node<Type, order> * &right_half,   Kid *&median){
 
 		right_half = new B_node<Type,order>;
 		int mid = order/2;
@@ -228,7 +228,7 @@ template <class Type, int order> void Btree<Type,order>::dividirNodo( B_node<Typ
 		current->count--;
 }
 
-template <class Type, int order> void Btree<Type,order>::remover( const Type &target ){
+template <class Type, int order> void Btree<Type,order>::remover( Kid *&target ){
 
 	removerEnRecursion( root , target );
 	if( root != NULL && root->count == 0 ){
@@ -237,7 +237,7 @@ template <class Type, int order> void Btree<Type,order>::remover( const Type &ta
 		delete delete_root;
 	}
 }
-template <class Type, int order> void Btree<Type,order>::removerEnRecursion( B_node<Type, order> *current, const Type &target ){
+template <class Type, int order> void Btree<Type,order>::removerEnRecursion( B_node<Type, order> *current, Kid *&target ){
 
 	int position;
 	if( current == NULL ){

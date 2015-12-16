@@ -12,7 +12,7 @@ template <class Type, int order> class B_node {
 	friend class Btree< Type, order>;
 private:
 	int count;
-    Kid data[order-1];
+    Kid* data[order-1];
 	B_node<Type, order> *childs[order];
 // constructor:
 public:
@@ -51,7 +51,7 @@ template<  class Type, int order > bool B_node< Type, order>::NodeEmpty() const 
 template< class Type, int order > void B_node< Type,order>::mostrarNodo() { 
 	
 	for(int i=0; i< this->count ;i++) 
-        cout <<"\t"<< data[i].nombre<<", ";
+        cout <<"\t"<< data[i]->nombre<<", ";
 	
 	cout <<"\n"; 
 	
